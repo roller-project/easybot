@@ -29,6 +29,11 @@ Trader.prototype.getPair = function(){
 	return "Khoa"
 }
 
+
+Trader.prototype.getTickets = function(){
+	return "Khoa"
+}
+
 Trader.prototype.getCandle = function(){
 	var pair = this.pair;
 	var interval = '1m'

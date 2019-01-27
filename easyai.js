@@ -10,10 +10,10 @@ if(settings.launchUI()){
 	return require(dirs.root+"/web/server");
 }
 
-const child = spawn('node', ['watch.js'],['--config config/config.js']);
+//const child = spawn('node', ['watch.js'],['--config config/config.js']);
 
-children.push(child);
-
+//children.push(child);
+/*
 child.on('exit', function(){
   clearTimeout(to);
   console.log('Child exited!');
@@ -26,7 +26,7 @@ child.stdout.on('data', function (data) {
 child.stderr.on('data', function (data) {
   console.log('stderr: ' + data);
 });
-
+*/
 //settings.getCandle();
 settings.startBot();
 

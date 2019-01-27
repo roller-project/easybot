@@ -3,6 +3,10 @@ const moment = require('moment');
 const path = require('path');
 const fs = require('fs');
 const _ = require('lodash');
+const Loader = require('./loader');
+const events = require('events');
+const eventEmitter = new events.EventEmitter();
+
 const startTime = moment();
 var _config = false;
 
@@ -49,15 +53,19 @@ var easyBase = {
 	},
 
 	startBot : function(){
+
+		console.log(this.getFile("keys","keys.json"))
 		var configAPI = this.getKeyAPI();
-		var Exchange = require(this.getDir().exchange + _config.trader.exchange);
+		
 		
 		_config.key = configAPI.key;
 		_config.secret = configAPI.secret;
-
-		var ctlExchange = new Exchange(_config);
-		var Trader = require(this.getDir().core + "trader/"+ _config.trader.method.toLowerCase())(_config);
-
+		_config.dirs = this.getDir()
+		//var Exchange = require(this.getDir().exchange + _config.trader.exchange);
+		//var ctlExchange = new Exchange(_config);
+		//var Trader = require(this.getDir().core + "trader/"+ _config.trader.method.toLowerCase())(_config);
+		
+		var LoaderStrem = new Loader(_config)
 		
 		
 	},
@@ -66,16 +74,49 @@ var easyBase = {
 	stopBot : function(){
 
 	},
-	getKeyAPI : function(){
-		_package = JSON.parse( fs.readFileSync(this.getDir().keys + "keys.json", 'utf8') );
-		var exchange = _config.trader.exchange;
+	getFile : function(subfolder, file, exitFile=false){
+		var getfile = "";
+		getPath = _.filter(this.getDir(), function(data, value){
+				if(value === subfolder){
+					return data;
+				}
+			})[0];
 
-        data = _.filter(_package, function(data, value){
-        	if(value === exchange){
+		if(exitFile && !fs.existsSync(getPath + file)){
+			getfile =  getPath + file;
+		}else{
+			getfile = getPath + file;
+		}
+		return getfile;
+	},
+
+	getJSON : function(file, keys){
+
+		jsonObject = JSON.parse( fs.readFileSync(file, 'utf8') );
+		if(keys){
+			return this.getObject(jsonObject, keys);
+		}
+		return jsonObject;
+	},
+	getObject : function(object, keys){
+		if(!_.isObject(object)) return;
+		data = _.filter(object, function(data, value){
+        	if(value === keys){
         		return data;
         	}
         });
         return data[0];
+	},
+	getKeyAPI : function(){
+		var filekeys = this.getFile("keys","keys.json",true);
+
+		if(!filekeys){
+	      console.log('Cannot find the specified config file.');
+	      process.exit(1);
+		}
+
+		return this.getJSON(filekeys, _config.trader.exchange);
+
 	},
 	getCandle : function(){
 		var Exchange = require(this.getDir().exchange + _config.trader.exchange);
