@@ -1,0 +1,15 @@
+include ./../layout/header.html
+div
+  include ./report_trader
+  br
+  div#chart(style="height: 650px; min-width: 310px")
+  br
+  include ./roundtrip
+
+include ./../layout/footer.html
+script(src="https://code.highcharts.com/stock/highstock.js")
+script(src="https://code.highcharts.com/stock/modules/drag-panes.js")
+script(src="https://code.highcharts.com/stock/modules/exporting.js")
+script(src="https://code.highcharts.com/stock/indicators/indicators.js")
+script(src="https://code.highcharts.com/stock/indicators/volume-by-price.js")
+

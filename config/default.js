@@ -6,10 +6,10 @@ config.trader = {
   exchange: 'binance',
   currency: 'BTC',
   asset: 'PPT',
-  method : 'PageTrader'
+  method : 'pagetrader'
 }
 
-config.PageTrader = {
+config.pagetrader = {
 	balance :{
 		asset : 0,
 		currency : 0.1

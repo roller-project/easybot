@@ -4,20 +4,31 @@
   "description": "Auto Bot AI Trading Binace",
   "main": "easyai.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start-ui": "node ./easyai --config config/default.js --ui",
+    "start": "node ./easyai --config config/default.js"
   },
   "author": "VO VAN KHOA",
   "license": "ISC",
   "dependencies": {
     "async": "^2.6.1",
     "binance": "^1.3.3",
+    "body-parser": "^1.18.3",
+    "child_process": "^1.0.2",
     "co-fs": "^1.2.0",
     "commander": "^2.19.0",
     "express": "^4.16.4",
+    "http": "0.0.0",
     "http-auth": "^3.2.3",
+    "https": "^1.0.0",
     "lodash": "^4.17.11",
     "moment": "^2.24.0",
+    "mysql": "^2.16.0",
+    "pug": "^2.0.3",
     "request-promise": "^4.2.2",
+    "retry": "^0.12.0",
+    "socket.io": "^2.2.0",
+    "sqlite3": "^4.0.6",
     "toml": "^2.3.5",
     "ws": "^6.1.3"
   }
