@@ -8,6 +8,18 @@ const events = require('events');
 const eventEmitter = new events.EventEmitter();
 const PromiseTimer = require("bluebird");
 const Indicator = require('./indicator');
+const chalk = require('chalk');
+const log = console.log;
+const figlet = require('figlet');
+ 
+log(figlet.textSync('AI TRADER!', {
+    font: 'Ghost',
+    horizontalLayout: 'default',
+    verticalLayout: 'default'
+}));
+
+log(chalk.blue('AI TRADER START WITH INFO!'));
+//log(chalk.blue('Date') + chalk.blue('Price') + chalk.blue('RSI') + chalk.blue('Action'));
 const startTime = moment();
 var _config = false;
 
@@ -18,10 +30,33 @@ var Loader = function(config){
 
 	this.interval = 2;
 	this.exchange = false;
+	this.pair = this.config.trader.asset.toUpperCase() + this.config.trader.currency.toUpperCase();
+
+
+	if(this.config.trader.method === "pagetrader"){
+		this.tradeMethod = this.config.pagetrader;
+		this.tradeMethod.name = "Page Trader";
+		this.traderBot = util.loadFile("core","trader/pagetrader");
+	}else{
+		this.tradeMethod = this.config.bottrader;
+		this.tradeMethod.name = "Bot Trader";
+		this.traderBot = util.loadFile("core","trader/botrader");
+	}
+
+
+	log(chalk.blue('Exchange : '+this.config.trader.exchange+'!'));
+	log(chalk.green('Pair : '+this.pair));
+	log(chalk.green('Method : '+this.tradeMethod.name+' - Period : '+this.config.trader.period));
 
 	this.getExchange()
 	this.getPlugins()
-	this.strategies = this.getStrategies('RSI')
+
+	this.strategies = this.getStrategies(this.tradeMethod.strategies.name.toUpperCase()); // load strategies
+
+
+	/*
+	Create Class Buy Sell
+	*/
 	this.strategies.trade = function(target){
 		if(target == "buy"){
 			return "Buy";
@@ -31,16 +66,20 @@ var Loader = function(config){
 	};
 	
 
+	/*
+	Create Indicator
+	*/
+
 	this.strategies.addTalibIndicator = function(name, lib, options){
-		return new Indicator(name, lib, options);
+		//return new Indicator(name, lib, options);
 	};
 
 	this.strategies.addIndicator = function(name, lib, options){
-		var setIndicator = new Indicator(name, lib, options);
+		//var setIndicator = new Indicator(name, lib, options);
 	};
 
 	this.strategies.addTubIndicator = function(name, lib, options){
-		var setIndicator = new Indicator(name, lib, options);
+		//var setIndicator = new Indicator(name, lib, options);
 	};
 
 
@@ -49,14 +88,14 @@ var Loader = function(config){
 		//console.log(`interval Loader`);
         console.log(new Date());
         //this.getTickets();
-
+        /*
         this.strategies.candles = this.getCandle();
         this.strategies.candle = _.first(this.strategies.candles);
 
         //getvalue = this.strategies.indicator.getValue(this.strategies.candles);
 
         console.log(this.strategies.check());
-
+		*/
 		this.sleep(this.interval)
 	}
 	//setInterval(this.StartsUp(), this.interval );
@@ -117,7 +156,7 @@ Loader.prototype.getPlugins = function(){
 }
 
 Loader.prototype.getCandle = function(){
-	return util.getJSON("fetchdata","PPTBTC-1m-binance.json");
+	return util.getJSON("fetchdata",this.pair+"-"+this.config.trader.period+"-"+this.config.trader.exchange+".json");
 }
 
 module.exports = Loader;

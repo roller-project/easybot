@@ -7,25 +7,21 @@ const util = require('./util');
 const events = require('events');
 const eventEmitter = new events.EventEmitter();
 var registerIndicator = []
-var Indicator = function(name, lib, options){
-	_.bindAll(this);
+
+module.exports = {
+	create : function(){
+
+	},
+	addTalibIndicator : function(name, base, options){
+
+	},
+	addIndicator : function(name, base, options){
+
+	},
+	addTulibIndicator : function(name, base, options){
+
+	},
+	getValue : function(){
+
+	}
 }
-
-Indicator.prototype.addTalibIndicator = function(){
-
-}
-
-Indicator.prototype.addIndicator = function(){
-
-}
-
-
-Indicator.prototype.addTulibIndicator = function(){
-
-}
-
-Indicator.prototype.getValue = function(){
-
-}
-
-module.exports = Indicator;
