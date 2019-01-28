@@ -6,7 +6,7 @@ const _ = require('lodash');
 const util = require('./util');
 const events = require('events');
 const eventEmitter = new events.EventEmitter();
-var registerIndicator = []
+var registerIndicator = {}
 
 module.exports = {
 	create : function(){
@@ -16,10 +16,14 @@ module.exports = {
 
 	},
 	addIndicator : function(name, base, options){
-
+		//_.bindAll(this,[name]);
+		
+		json = JSON.parse('{"'+name+'" : "khoa"}');
+		_.assign(registerIndicator, json)
+		return registerIndicator;
 	},
 	addTulibIndicator : function(name, base, options){
-
+		this.$(name) = "Khoa"
 	},
 	getValue : function(){
 

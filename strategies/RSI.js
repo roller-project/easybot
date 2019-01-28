@@ -1,15 +1,20 @@
 var start = {
 	init : function(){
-		this.addTalibIndicator("rsi","RSI",{})
-		console.log(this);
+		this.addIndicator("rsi","RSI",{})
+		this.addIndicator("rsi2","RSI",{})
+		console.log(this.rsi);
 	},
 	update : function(){
 
 	},
 	check : function(){
 		price = this.candle.close;
-		console.log(this);
+		this.trade("buy");
+		this.trade("sell");
 		//console.log(this.trade("sell"));
+	},
+	_writelog : function(){
+		return this.candle.close;
 	}
 }
 module.exports = start;

@@ -7,7 +7,7 @@ const util = require('./util');
 const events = require('events');
 const eventEmitter = new events.EventEmitter();
 const PromiseTimer = require("bluebird");
-const Indicator = require('./indicator');
+const Indicator = new require('./indicator');
 const chalk = require('chalk');
 const log = console.log;
 const figlet = require('figlet');
@@ -36,13 +36,16 @@ var Loader = function(config){
 	if(this.config.trader.method === "pagetrader"){
 		this.tradeMethod = this.config.pagetrader;
 		this.tradeMethod.name = "Page Trader";
-		this.traderBot = util.loadFile("core","trader/pagetrader");
+		const Trader = util.loadFile("core","trader/pagetrader");
+		this.traderBot = new Trader(this.config);
+
 	}else{
 		this.tradeMethod = this.config.bottrader;
 		this.tradeMethod.name = "Bot Trader";
 		this.traderBot = util.loadFile("core","trader/botrader");
 	}
 
+	this.traderBot.exchange = this.exchange;
 
 	log(chalk.blue('Exchange : '+this.config.trader.exchange+'!'));
 	log(chalk.green('Pair : '+this.pair));
@@ -57,36 +60,42 @@ var Loader = function(config){
 	/*
 	Create Class Buy Sell
 	*/
+	
 	this.strategies.trade = function(target){
 		if(target == "buy"){
-			return "Buy";
+			log(this.traderBot);
+			//this.traderBot.buy()
+
 		}else if(target == "sell"){
-			return "Sell";
+			//this.traderBot.sell()
 		}
+		//this.strategies.trend = this.traderBot.getTrend()
 	};
 	
 
 	/*
 	Create Indicator
 	*/
-
+	var setIndicator = {};
 	this.strategies.addTalibIndicator = function(name, lib, options){
-		//return new Indicator(name, lib, options);
+		setIndicator = Indicator.addTalibIndicator(name, lib, options);
 	};
 
 	this.strategies.addIndicator = function(name, lib, options){
-		//var setIndicator = new Indicator(name, lib, options);
+		setIndicator = Indicator.addIndicator(name, lib, options);
 	};
 
 	this.strategies.addTubIndicator = function(name, lib, options){
-		//var setIndicator = new Indicator(name, lib, options);
+		setIndicator = Indicator.addTubIndicator(name, lib, options);
 	};
 
-
+	
 	this.strategies.init();
+	log(setIndicator)
+	log(chalk.green("Date					"),'Price	','RSI	','Trader 	','Action	','Roundtrip');
 	while(true){
 		//console.log(`interval Loader`);
-        console.log(new Date());
+        
         //this.getTickets();
         /*
         this.strategies.candles = this.getCandle();
@@ -96,6 +105,12 @@ var Loader = function(config){
 
         console.log(this.strategies.check());
 		*/
+		this.strategies.candles = this.getCandle();
+		this.strategies.candle = _.first(this.strategies.candles);
+		
+		this.strategies.check();
+		log(chalk.green(new Date()),this.strategies._writelog()	,'30	',this.strategies.candle.trades+'		','BUY	','Sell 	');
+
 		this.sleep(this.interval)
 	}
 	//setInterval(this.StartsUp(), this.interval );
@@ -113,7 +128,7 @@ Loader.prototype.sleep =  function(milliseconds) {
 
 Loader.prototype.getExchange = function(){
 	console.log(`Get Exchange`);
-	var Exchange = util.loadFile("exchange",this.config.trader.exchange);
+	var Exchange = util.loadFile("exchange",this.config.trader.exchange.toLowerCase());
 	this.exchange = new Exchange(this.config);
 	//var Trader = require(this.getDir().core + "trader/"+ _config.trader.method.toLowerCase())(_config);
 
